@@ -1,4 +1,3 @@
-// File Name GreetingServer.java
 import java.net.*;
 import java.io.*;
 
@@ -13,17 +12,15 @@ public class TCPServer extends Thread {
    public void run() {
       while(true) {
          try {
-            System.out.println("Waiting for client on port " +
-               serverSocket.getLocalPort() + "...");
             Socket server = serverSocket.accept();
 
-            System.out.println("Just connected to " + server.getRemoteSocketAddress());
             DataInputStream in = new DataInputStream(server.getInputStream());
+            String sentence = in.readUTF();
 
-            System.out.println(in.readUTF());
+            System.out.println(sentence);
+
             DataOutputStream out = new DataOutputStream(server.getOutputStream());
-            out.writeUTF("Thank you for connecting to " + server.getLocalSocketAddress()
-               + "\nGoodbye!");
+            out.writeUTF(sentence.toUpperCase());
             server.close();
 
          } catch (SocketTimeoutException s) {
