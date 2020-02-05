@@ -1,5 +1,7 @@
 import java.net.*;
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TCPServer extends Thread {
    private ServerSocket serverSocket;
@@ -9,6 +11,47 @@ public class TCPServer extends Thread {
       serverSocket.setSoTimeout(10000);
    }
 
+   // Check if URL is validoo
+   public static Boolean isWebpage(String u){
+
+       try{
+           new URL(u).toURI();
+           return true;
+       }
+
+       catch (Exception e){
+           return false;
+       }
+   }
+
+
+   // Read dat page!!!
+   public static String ReadPage(String s) throws IOException {
+
+       URL u = new URL(s);
+       Boolean hasEmails = false;
+       String returnString = "";
+
+       BufferedReader in = new BufferedReader(
+               new InputStreamReader(u.openStream()));
+
+       String inLine;
+       while ((inLine = in.readLine()) != null) {
+           //System.out.println(inLine);
+
+           Pattern pattern = Pattern.compile("([a-z0-9_.-]+)@([a-z0-9_.-]+[a-z])");
+           Matcher matcher = pattern.matcher(inLine);
+
+           while(matcher.find()){
+               returnString = returnString.concat(matcher.group() + "\n");
+           }
+
+       }
+       in.close();
+       return returnString;
+  }
+
+
    public void run() {
       while(true) {
          try {
@@ -16,11 +59,14 @@ public class TCPServer extends Thread {
 
             DataInputStream in = new DataInputStream(server.getInputStream());
             String sentence = in.readUTF();
+            String response = "";
 
-            System.out.println(sentence);
+            if(isWebpage(sentence)) {
+              response = ReadPage(sentence);
+            }
 
             DataOutputStream out = new DataOutputStream(server.getOutputStream());
-            out.writeUTF(sentence.toUpperCase());
+            out.writeUTF(response);
             server.close();
 
          } catch (SocketTimeoutException s) {
