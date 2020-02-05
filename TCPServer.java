@@ -59,10 +59,16 @@ public class TCPServer extends Thread {
 
             DataInputStream in = new DataInputStream(server.getInputStream());
             String sentence = in.readUTF();
-            String response = "";
+            String response = "0 \n";
 
             if(isWebpage(sentence)) {
-              response = ReadPage(sentence);
+              response = response.concat(ReadPage(sentence));
+              if(response == "0 \n")
+                response = "1 !!!No email address found on the page!!!";
+            }
+            else
+            {
+              response = "2 !!!Server couldn’t find the web page!!!";
             }
 
             DataOutputStream out = new DataOutputStream(server.getOutputStream());
