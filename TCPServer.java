@@ -11,7 +11,7 @@ public class TCPServer extends Thread {
       serverSocket.setSoTimeout(10000);
    }
 
-   // Check if URL is validoo
+   // Check if URL is valid.
    public static Boolean isWebpage(String u){
 
        try{
@@ -39,7 +39,7 @@ public class TCPServer extends Thread {
        while ((inLine = in.readLine()) != null) {
            //System.out.println(inLine);
 
-           Pattern pattern = Pattern.compile("([a-z0-9_.-]+)@([a-z0-9_.-]+[a-z])");
+           Pattern pattern = Pattern.compile("([a-zA-Z0-9_.-]+)@([a-zA-Z0-9_.-]+[a-zA-Z])");
            Matcher matcher = pattern.matcher(inLine);
 
            while(matcher.find()){
@@ -60,7 +60,7 @@ public class TCPServer extends Thread {
             DataInputStream in = new DataInputStream(server.getInputStream());
             String sentence = in.readUTF();
             String response = "0 \n";
-
+            System.out.println("RECEIVED: " + sentence);
             if(isWebpage(sentence)) {
               response = response.concat(ReadPage(sentence));
               if(response == "0 \n")
@@ -73,6 +73,7 @@ public class TCPServer extends Thread {
 
             DataOutputStream out = new DataOutputStream(server.getOutputStream());
             out.writeUTF(response);
+            response = "0 \n";
             server.close();
 
          } catch (SocketTimeoutException s) {
