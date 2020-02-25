@@ -22,8 +22,8 @@ class UDPClient
         clientSocket.send(sendPacket);
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         clientSocket.receive(receivePacket);
-        String modifiedSentence = new String(receivePacket.getData());
-        System.out.println(modifiedSentence);
+        String response = new String(receivePacket.getData());
+        System.out.println(response);
         clientSocket.close();
       }
       catch(IOException e){
